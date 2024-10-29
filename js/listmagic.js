@@ -5,6 +5,8 @@ let ListMagic = {
 		h2Title: $("#h2_title"),
 		inputText: $("#input_text"),
 		textareaText: $("#textarea_text"),
+		inputSwitchCustomDelimiter: $("#input_switch_custom_delimiter"),
+		inputDelimiter: $("#input_delimiter"),
 		inputSwitchTrimWhitespaces: $("#input_switch_trim_whitespaces"),
 		inputSwitchSortAlphabetically: $("input_switch_sort_alphabetically"),
 		inputSwitchDeduplicate: $("#input_switch_deduplicate")
@@ -22,6 +24,16 @@ let ListMagic = {
 		// Register listeners & configs
 		ListMagic.pageElements.inputText.on("keyup", ListMagic.processRawToList);
 		ListMagic.pageElements.textareaText.on("keyup", ListMagic.processListToRaw);
+		ListMagic.pageElements.inputSwitchCustomDelimiter.on("change", function(){
+			ListMagic.pageElements.inputDelimiter.prop("disabled", !$(this).is(':checked'));
+			ListMagic.processRawToList();
+		});
+		ListMagic.pageElements.inputDelimiter.on("focus", function(){
+			$(this).select();
+		});
+		ListMagic.pageElements.inputDelimiter.on("keyup", function(){
+			ListMagic.processRawToList();
+		});
 
 		// Ready
 		CommonHelpers.logger.info("loaded successfully", ListMagic.name);
@@ -64,18 +76,32 @@ let ListMagic = {
 
 	},
 	autodetectDelimiter: (text)=>{
+		// default = comma
+		let delimiter = ",";
+
 		// <pipe>
 		if(/\|/.test(text)){
-			return "|";
+			delimiter = "|";
 		}
 		// <comma>
-		if(/,/.test(text)){
-			return ",";
+		else if(/,/.test(text)){
+			delimiter = ",";
 		}
 		// <space>
-		if(/ /.test(text)){
-			return " ";
+		else if(/ /.test(text)){
+			delimiter = " ";
 		}
+
+
+		// check if custom delimiter set, otherwise use default behaviour
+		if(ListMagic.pageElements.inputSwitchCustomDelimiter.is(":checked")){
+			delimiter = ListMagic.pageElements.inputDelimiter.val() || delimiter;
+		} 
+		
+		// Update UI
+		ListMagic.pageElements.inputDelimiter.val(delimiter);
+
+		return delimiter;
 	},
 	sortFunction: (a,b)=>{
 		return a.localeCompare(b, undefined, {sensitivity: 'base'});
