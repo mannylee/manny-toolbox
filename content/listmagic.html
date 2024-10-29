@@ -12,6 +12,18 @@
 							<textarea id="textarea_text" class="form-control" rows="5" style="height:calc(100vh - 250px);min-height:300px" placeholder="Enter list items here separated by a new line"></textarea>
 						</div>
 						<div class="col-md-3">
+
+							<div class="row align-items-center">
+								<div class="col-auto">
+								  <div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" role="switch" id="input_switch_custom_delimiter">
+									<label class="form-check-label" for="input_switch_custom_delimiter">Custom Delimiter</label>
+								  </div>
+								</div>
+								<div class="col">
+								  <input type="text" class="form-control" id="input_delimiter" value="," placeholder=" " disabled maxlength="4">
+								</div>
+							</div>
 							<div class="form-check form-switch">
 								<input class="form-check-input" type="checkbox" id="input_switch_trim_whitespaces" checked>
 								<label class="form-check-label" for="input_switch_trim_whitespaces">Trim Whitespaces</label>
