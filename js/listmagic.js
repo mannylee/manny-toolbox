@@ -1,53 +1,148 @@
-<div class="container my-5">
-	<div class="row justify-content-center">
-		<div class="col-lg-10 col-md-10">
-			<h2 id="h2_title"></h2>
-			<div class="card">
-				<div class="card-body">
-					<div class="row">
-					<div class="mb-3">
-						<div class="form-floating">
-						<input id="input_text" input_type="text" class="form-control" placeholder="Enter raw string here" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-						<label for="input_text">String</label>
-					</div>
-					</div>
-					</div>
-					<div class="row">
-						<div class="col-md-9">
+let ListMagic = {
+	name: "ListMagic",
+	friendlyName: "List Magic",
+	pageElements: {
+		h2Title: $("#h2_title"),
+		inputDelimiter: $("#input_delimiter"),
+		inputSwitchCustomDelimiter: $("#input_switch_custom_delimiter"),
+		inputSwitchDeduplicate: $("#input_switch_deduplicate"),
+		inputSwitchNoBlankStrings: $("#input_switch_no_blank_strings"),
+		inputSwitchSortAlphabetically: $("#input_switch_sort_alphabetically"),
+		inputSwitchTrimWhitespaces: $("#input_switch_trim_whitespaces"),
+		inputText: $("#input_text"),
+		labelTextarea: $("label[for='textarea_text']"),
+		textareaText: $("#textarea_text"),
+	},
+	config: {
+		inputTextMinLength: 3	// min length before any processing should happen
+	},
+	variables: {
+		itemsList: []
+	},
+	load: ()=>{
+		// Update SPA
+		SPA.variables.currentPageObject = ListMagic;
 
-						<div class="form-floating">
-							<textarea id="textarea_text" class="form-control" rows="5" style="height:calc(100vh - 250px);min-height:300px" placeholder="Enter list items here separated by a new line" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-							<label for="textarea_text">List</label>
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="row align-items-center">
-								<div class="col-auto">
-								  <div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" role="switch" id="input_switch_custom_delimiter">
-									<label class="form-check-label" for="input_switch_custom_delimiter">Custom Delimiter</label>
-								  </div>
-								</div>
-								<div class="col">
-								  <input type="text" class="form-control" id="input_delimiter" value="," placeholder=" " disabled pattern=".{1,5}" required title="Must be 1-5 characters" maxlength="5">							  
-								</div>
-							</div>
-							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" id="input_switch_trim_whitespaces" checked>
-								<label class="form-check-label" for="input_switch_trim_whitespaces">Trim Whitespaces</label>
-							</div>
-							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" id="input_switch_sort_alphabetically" checked>
-								<label class="form-check-label" for="input_switch_sort_alphabetically">Sort Alphabetically</label>
-							</div>
-							<div class="form-check form-switch">
-								<input class="form-check-input" type="checkbox" id="input_switch_deduplicate" checked>
-								<label class="form-check-label" for="input_switch_deduplicate">De-duplicate</label>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+		// Register listeners & configs
+		ListMagic.pageElements.inputText.on("keyup", ListMagic.processRawToList);
+		ListMagic.pageElements.textareaText.on("keyup", ListMagic.processListToRaw);
+		ListMagic.pageElements.textareaText.on("change", ListMagic.processRawToList);
+		ListMagic.pageElements.inputSwitchCustomDelimiter.on("change", function(){
+			ListMagic.pageElements.inputDelimiter.prop("disabled", !$(this).is(':checked'));
+			ListMagic.processRawToList();
+		});
+		ListMagic.pageElements.inputSwitchDeduplicate.on("change", ListMagic.processRawToList);
+		ListMagic.pageElements.inputSwitchSortAlphabetically.on("change", ListMagic.processRawToList);
+		ListMagic.pageElements.inputSwitchTrimWhitespaces.on("change", ListMagic.processRawToList);
+		ListMagic.pageElements.inputDelimiter.on("focus", function(){
+			$(this).select();
+		});
+		ListMagic.pageElements.inputDelimiter.on("keyup", function(){
+			if(ListMagic.pageElements.inputDelimiter.val().length < 1){
+				// User is probably changing the custom delimiter
+			} else {
+				ListMagic.processRawToList();
+			}
+		});
+		ListMagic.pageElements.inputDelimiter.on("change", function(){
+			if(ListMagic.pageElements.inputDelimiter.val().length === 0){
+				ListMagic.pageElements.inputDelimiter.addClass("is-invalid");
+			} else {
+				ListMagic.pageElements.inputDelimiter.removeClass("is-invalid");
+			}
+		});
+
+		// Ready
+		CommonHelpers.logger.info("loaded successfully", ListMagic.name);
+	},
+	destroy: ()=>{
+		ListMagic = null;
+	},
+
+	// Page specific functions below this line
+	// ---------------------------––––--------
+	processRawToList: ()=>{
+		// Length check
+		// if(ListMagic.pageElements.inputText.val().length < ListMagic.config.inputTextMinLength) {
+		 	// return;
+		// }
+		if(ListMagic.pageElements.inputText.val().length !== 0){
+		
+			ListMagic.variables.itemsList = ListMagic.pageElements.inputText.val()
+				.split(ListMagic.autodetectDelimiter(ListMagic.pageElements.inputText.val()));
+			
+			// Trim whitespaces
+			if(ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")){
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.map((value)=> value.trim());
+			}
+			
+			// De-duplicate
+			if(ListMagic.pageElements.inputSwitchDeduplicate.prop("checked")){
+				ListMagic.variables.itemsList = [...new Set(ListMagic.variables.itemsList)];
+			}
+
+			// Sort alphabetically
+			if(ListMagic.pageElements.inputSwitchSortAlphabetically.prop("checked")){
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.sort(ListMagic.sortFunction)
+			}
+			
+			// No Blank Strings
+			if(ListMagic.pageElements.inputSwitchNoBlankStrings.prop("checked")){
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.filter((value)=> value.length>0);
+			}
+
+		} else {
+			ListMagic.variables.itemsList = [];
+		}
+
+		// Output text to textarea
+		ListMagic.pageElements.textareaText.val(ListMagic.variables.itemsList.join("\n"));
+
+		// Update the number of items in textarea description
+		ListMagic.pageElements.labelTextarea.text("List" + (ListMagic.variables.itemsList.length > 0? " (" + ListMagic.variables.itemsList.length + ")" : ""));
+	},
+	processListToRaw: ()=>{
+		let listElements = ListMagic.pageElements.textareaText.val().split("\n");
+
+		if(ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")){
+			listElements = listElements.map((value)=> value.trim());
+		}
+
+		ListMagic.pageElements.inputText.val(listElements.join(ListMagic.autodetectDelimiter()));
+	},
+	autodetectDelimiter: (text)=>{
+		text = text || ListMagic.pageElements.inputText.val();
+
+		// default = comma
+		let delimiter = ",";
+
+		// <pipe>
+		if(/\|/.test(text)){
+			delimiter = "|";
+		}
+		// <comma>
+		else if(/,/.test(text)){
+			delimiter = ",";
+		}
+		// <space>
+		else if(/ /.test(text)){
+			delimiter = " ";
+		}
+
+
+		// check if custom delimiter set, otherwise use default behaviour
+		if(ListMagic.pageElements.inputSwitchCustomDelimiter.is(":checked")){
+			delimiter = ListMagic.pageElements.inputDelimiter.val() || delimiter;
+		} 
+		
+		// Update UI
+		ListMagic.pageElements.inputDelimiter.val(delimiter);
+
+		return delimiter;
+	},
+	sortFunction: (a,b)=>{
+		return a.localeCompare(b, undefined, {sensitivity: 'base'});
+	}
+};
+
+ListMagic.load();
