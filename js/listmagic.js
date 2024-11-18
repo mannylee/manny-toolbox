@@ -18,8 +18,8 @@ let ListMagic = {
 		itemsList: []
 	},
 	load: ()=>{
-		// Update title
-		ListMagic.pageElements.h2Title.text(ListMagic.friendlyName);
+		// Update SPA
+		SPA.variables.currentPageObject = ListMagic;
 
 		// Register listeners & configs
 		ListMagic.pageElements.inputText.on("keyup", ListMagic.processRawToList);
