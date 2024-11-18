@@ -4,7 +4,7 @@ let ListMagic = {
 	pageElements: {
 		h2Title: $("#h2_title"),
 		inputDelimiter: $("#input_delimiter"),
-		inputSwitchCustomDelimiter: $("#input_switch_custom_delimiter"),
+		inputSwitchAutoDelimiter: $("#input_switch_auto_delimiter"),
 		inputSwitchDeduplicate: $("#input_switch_deduplicate"),
 		inputSwitchNoBlankStrings: $("#input_switch_no_blank_strings"),
 		inputSwitchSortAlphabetically: $("#input_switch_sort_alphabetically"),
@@ -27,8 +27,8 @@ let ListMagic = {
 		ListMagic.pageElements.inputText.on("keyup", ListMagic.processRawToList);
 		ListMagic.pageElements.textareaText.on("keyup", ListMagic.processListToRaw);
 		ListMagic.pageElements.textareaText.on("change", ListMagic.processRawToList);
-		ListMagic.pageElements.inputSwitchCustomDelimiter.on("change", function(){
-			ListMagic.pageElements.inputDelimiter.prop("disabled", !$(this).is(':checked'));
+		ListMagic.pageElements.inputSwitchAutoDelimiter.on("change", function(){
+			ListMagic.pageElements.inputDelimiter.prop("disabled", $(this).is(':checked'));
 			ListMagic.processRawToList();
 		});
 		ListMagic.pageElements.inputSwitchDeduplicate.on("change", ListMagic.processRawToList);
@@ -93,6 +93,7 @@ let ListMagic = {
 
 		} else {
 			ListMagic.variables.itemsList = [];
+			ListMagic.autodetectDelimiter("");
 		}
 
 		// Output text to textarea
@@ -130,8 +131,8 @@ let ListMagic = {
 		}
 
 
-		// check if custom delimiter set, otherwise use default behaviour
-		if(ListMagic.pageElements.inputSwitchCustomDelimiter.is(":checked")){
+		// check if auto delimiter disabled, otherwise use default behaviour
+		if(!ListMagic.pageElements.inputSwitchAutoDelimiter.is(":checked")){
 			delimiter = ListMagic.pageElements.inputDelimiter.val() || delimiter;
 		} 
 		
