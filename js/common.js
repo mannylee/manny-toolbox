@@ -20,7 +20,9 @@ const SPA = {
 	variables: {
 		currentPage: null,
 		previousPage: null,
-		hooksOnPageUnload: []
+		hooksOnPageUnload: [],
+		hooksOnPageLoad: [],
+		currentPageObject: null
 	},
 	initialise: ()=>{
 		CommonHelpers.logger.info("initialise", "SPA");
@@ -41,12 +43,19 @@ const SPA = {
 		// Load the html file first
 		$("body").load("content/" + page + ".html", ()=>{
 			// Load the page JS dynamically, after HTML is done
-			$.getScript("js/" + page + ".js")
+			$.getScript("js/" + page + ".js").done(SPA.onPageLoadHook);
 		});
 
-		// Execute any page load hooks
-		// TODO: fill
 	},
+	onPageLoadHook: ()=>{
+		// Execute any page load hooks
+		
+		// Update title
+		SPA.variables.currentPageObject.pageElements.h2Title.text(SPA.variables.currentPageObject.friendlyName);
+		document.title = SPA.variables.currentPageObject.friendlyName;
+		
+		// TODO: fill
+	}
 };
 
 
