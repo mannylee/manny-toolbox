@@ -3,13 +3,15 @@ let ListMagic = {
 	friendlyName: "List Magic",
 	pageElements: {
 		h2Title: $("#h2_title"),
-		inputText: $("#input_text"),
-		textareaText: $("#textarea_text"),
-		inputSwitchCustomDelimiter: $("#input_switch_custom_delimiter"),
 		inputDelimiter: $("#input_delimiter"),
+		inputSwitchAutoDelimiter: $("#input_switch_auto_delimiter"),
+		inputSwitchDeduplicate: $("#input_switch_deduplicate"),
+		inputSwitchNoBlankStrings: $("#input_switch_no_blank_strings"),
+		inputSwitchSortAlphabetically: $("#input_switch_sort_alphabetically"),
 		inputSwitchTrimWhitespaces: $("#input_switch_trim_whitespaces"),
-		inputSwitchSortAlphabetically: $("input_switch_sort_alphabetically"),
-		inputSwitchDeduplicate: $("#input_switch_deduplicate")
+		inputText: $("#input_text"),
+		labelTextarea: $("label[for='textarea_text']"),
+		textareaText: $("#textarea_text"),
 	},
 	config: {
 		inputTextMinLength: 3	// min length before any processing should happen
@@ -18,21 +20,36 @@ let ListMagic = {
 		itemsList: []
 	},
 	load: ()=>{
-		// Update title
-		ListMagic.pageElements.h2Title.text(ListMagic.friendlyName);
+		// Update SPA
+		SPA.variables.currentPageObject = ListMagic;
 
 		// Register listeners & configs
 		ListMagic.pageElements.inputText.on("keyup", ListMagic.processRawToList);
 		ListMagic.pageElements.textareaText.on("keyup", ListMagic.processListToRaw);
-		ListMagic.pageElements.inputSwitchCustomDelimiter.on("change", function(){
-			ListMagic.pageElements.inputDelimiter.prop("disabled", !$(this).is(':checked'));
+		ListMagic.pageElements.textareaText.on("change", ListMagic.processRawToList);
+		ListMagic.pageElements.inputSwitchAutoDelimiter.on("change", function(){
+			ListMagic.pageElements.inputDelimiter.prop("disabled", $(this).is(':checked'));
 			ListMagic.processRawToList();
 		});
+		ListMagic.pageElements.inputSwitchDeduplicate.on("change", ListMagic.processRawToList);
+		ListMagic.pageElements.inputSwitchSortAlphabetically.on("change", ListMagic.processRawToList);
+		ListMagic.pageElements.inputSwitchTrimWhitespaces.on("change", ListMagic.processRawToList);
 		ListMagic.pageElements.inputDelimiter.on("focus", function(){
 			$(this).select();
 		});
 		ListMagic.pageElements.inputDelimiter.on("keyup", function(){
-			ListMagic.processRawToList();
+			if(ListMagic.pageElements.inputDelimiter.val().length < 1){
+				// User is probably changing the custom delimiter
+			} else {
+				ListMagic.processRawToList();
+			}
+		});
+		ListMagic.pageElements.inputDelimiter.on("change", function(){
+			if(ListMagic.pageElements.inputDelimiter.val().length === 0){
+				ListMagic.pageElements.inputDelimiter.addClass("is-invalid");
+			} else {
+				ListMagic.pageElements.inputDelimiter.removeClass("is-invalid");
+			}
 		});
 
 		// Ready
@@ -46,36 +63,57 @@ let ListMagic = {
 	// ---------------------------––––--------
 	processRawToList: ()=>{
 		// Length check
-		if(ListMagic.pageElements.inputText.val().length < ListMagic.config.inputTextMinLength) {
-			return;
-		}
+		// if(ListMagic.pageElements.inputText.val().length < ListMagic.config.inputTextMinLength) {
+		 	// return;
+		// }
+		if(ListMagic.pageElements.inputText.val().length !== 0){
 		
-		ListMagic.variables.itemsList = ListMagic.pageElements.inputText.val()
-			.split(ListMagic.autodetectDelimiter(ListMagic.pageElements.inputText.val()));
-		
-		// Trim whitespaces
-		if(ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")){
-			ListMagic.variables.itemsList = ListMagic.variables.itemsList.map((value)=> value.trim());
-		}
-		
-		// De-duplicate
-		if(ListMagic.pageElements.inputSwitchDeduplicate.prop("checked")){
-			ListMagic.variables.itemsList = [...new Set(ListMagic.variables.itemsList)];
+			ListMagic.variables.itemsList = ListMagic.pageElements.inputText.val()
+				.split(ListMagic.autodetectDelimiter(ListMagic.pageElements.inputText.val()));
+			
+			// Trim whitespaces
+			if(ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")){
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.map((value)=> value.trim());
+			}
+			
+			// De-duplicate
+			if(ListMagic.pageElements.inputSwitchDeduplicate.prop("checked")){
+				ListMagic.variables.itemsList = [...new Set(ListMagic.variables.itemsList)];
+			}
+
+			// Sort alphabetically
+			if(ListMagic.pageElements.inputSwitchSortAlphabetically.prop("checked")){
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.sort(ListMagic.sortFunction)
+			}
+			
+			// No Blank Strings
+			if(ListMagic.pageElements.inputSwitchNoBlankStrings.prop("checked")){
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.filter((value)=> value.length>0);
+			}
+
+		} else {
+			ListMagic.variables.itemsList = [];
+			ListMagic.autodetectDelimiter("");
 		}
 
-		// Sort alphabetically
-		if(ListMagic.pageElements.inputSwitchSortAlphabetically.prop("checked")){
-			ListMagic.variables.itemsList = ListMagic.variables.itemsList.sort(ListMagic.sortFunction)
-		}
-
-		
 		// Output text to textarea
 		ListMagic.pageElements.textareaText.val(ListMagic.variables.itemsList.join("\n"));
+
+		// Update the number of items in textarea description
+		ListMagic.pageElements.labelTextarea.text("List" + (ListMagic.variables.itemsList.length > 0? " (" + ListMagic.variables.itemsList.length + ")" : ""));
 	},
 	processListToRaw: ()=>{
+		let listElements = ListMagic.pageElements.textareaText.val().split("\n");
 
+		if(ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")){
+			listElements = listElements.map((value)=> value.trim());
+		}
+
+		ListMagic.pageElements.inputText.val(listElements.join(ListMagic.autodetectDelimiter()));
 	},
 	autodetectDelimiter: (text)=>{
+		text = text || ListMagic.pageElements.inputText.val();
+
 		// default = comma
 		let delimiter = ",";
 
@@ -93,8 +131,8 @@ let ListMagic = {
 		}
 
 
-		// check if custom delimiter set, otherwise use default behaviour
-		if(ListMagic.pageElements.inputSwitchCustomDelimiter.is(":checked")){
+		// check if auto delimiter disabled, otherwise use default behaviour
+		if(!ListMagic.pageElements.inputSwitchAutoDelimiter.is(":checked")){
 			delimiter = ListMagic.pageElements.inputDelimiter.val() || delimiter;
 		} 
 		
