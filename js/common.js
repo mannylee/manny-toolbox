@@ -4,8 +4,16 @@
 const CONSTANTS = {
 	PAGES: {
 		listmagic: "listmagic",
-		urldecoder: "urldecoder"
+		urldecoder: "urldecoder",
+		jsonunfurler: "jsonunfurler"
 	}
+};
+
+/*
+	CONFIG Object (global)
+*/
+const CONFIG = {
+	JSON_FORMAT_SPACING: 3
 };
 
 /*
