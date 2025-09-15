@@ -19,7 +19,7 @@ let ListMagic = {
 	variables: {
 		itemsList: []
 	},
-	load: ()=>{
+	load: () => {
 		// Update SPA
 		SPA.variables.currentPageObject = ListMagic;
 
@@ -27,25 +27,25 @@ let ListMagic = {
 		ListMagic.pageElements.inputText.on("keyup", ListMagic.processRawToList);
 		ListMagic.pageElements.textareaText.on("keyup", ListMagic.processListToRaw);
 		ListMagic.pageElements.textareaText.on("change", ListMagic.processRawToList);
-		ListMagic.pageElements.inputSwitchAutoDelimiter.on("change", function(){
+		ListMagic.pageElements.inputSwitchAutoDelimiter.on("change", function () {
 			ListMagic.pageElements.inputDelimiter.prop("disabled", $(this).is(':checked'));
 			ListMagic.processRawToList();
 		});
 		ListMagic.pageElements.inputSwitchDeduplicate.on("change", ListMagic.processRawToList);
 		ListMagic.pageElements.inputSwitchSortAlphabetically.on("change", ListMagic.processRawToList);
 		ListMagic.pageElements.inputSwitchTrimWhitespaces.on("change", ListMagic.processRawToList);
-		ListMagic.pageElements.inputDelimiter.on("focus", function(){
+		ListMagic.pageElements.inputDelimiter.on("focus", function () {
 			$(this).select();
 		});
-		ListMagic.pageElements.inputDelimiter.on("keyup", function(){
-			if(ListMagic.pageElements.inputDelimiter.val().length < 1){
+		ListMagic.pageElements.inputDelimiter.on("keyup", function () {
+			if (ListMagic.pageElements.inputDelimiter.val().length < 1) {
 				// User is probably changing the custom delimiter
 			} else {
 				ListMagic.processRawToList();
 			}
 		});
-		ListMagic.pageElements.inputDelimiter.on("change", function(){
-			if(ListMagic.pageElements.inputDelimiter.val().length === 0){
+		ListMagic.pageElements.inputDelimiter.on("change", function () {
+			if (ListMagic.pageElements.inputDelimiter.val().length === 0) {
 				ListMagic.pageElements.inputDelimiter.addClass("is-invalid");
 			} else {
 				ListMagic.pageElements.inputDelimiter.removeClass("is-invalid");
@@ -55,40 +55,40 @@ let ListMagic = {
 		// Ready
 		CommonHelpers.logger.info("loaded successfully", ListMagic.name);
 	},
-	destroy: ()=>{
+	destroy: () => {
 		ListMagic = null;
 	},
 
 	// Page specific functions below this line
 	// ---------------------------––––--------
-	processRawToList: ()=>{
+	processRawToList: () => {
 		// Length check
 		// if(ListMagic.pageElements.inputText.val().length < ListMagic.config.inputTextMinLength) {
-		 	// return;
+		// return;
 		// }
-		if(ListMagic.pageElements.inputText.val().length !== 0){
-		
+		if (ListMagic.pageElements.inputText.val().length !== 0) {
+
 			ListMagic.variables.itemsList = ListMagic.pageElements.inputText.val()
 				.split(ListMagic.autodetectDelimiter(ListMagic.pageElements.inputText.val()));
-			
+
 			// Trim whitespaces
-			if(ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")){
-				ListMagic.variables.itemsList = ListMagic.variables.itemsList.map((value)=> value.trim());
+			if (ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")) {
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.map((value) => value.trim());
 			}
-			
+
 			// De-duplicate
-			if(ListMagic.pageElements.inputSwitchDeduplicate.prop("checked")){
+			if (ListMagic.pageElements.inputSwitchDeduplicate.prop("checked")) {
 				ListMagic.variables.itemsList = [...new Set(ListMagic.variables.itemsList)];
 			}
 
 			// Sort alphabetically
-			if(ListMagic.pageElements.inputSwitchSortAlphabetically.prop("checked")){
+			if (ListMagic.pageElements.inputSwitchSortAlphabetically.prop("checked")) {
 				ListMagic.variables.itemsList = ListMagic.variables.itemsList.sort(ListMagic.sortFunction)
 			}
-			
+
 			// No Blank Strings
-			if(ListMagic.pageElements.inputSwitchNoBlankStrings.prop("checked")){
-				ListMagic.variables.itemsList = ListMagic.variables.itemsList.filter((value)=> value.length>0);
+			if (ListMagic.pageElements.inputSwitchNoBlankStrings.prop("checked")) {
+				ListMagic.variables.itemsList = ListMagic.variables.itemsList.filter((value) => value.length > 0);
 			}
 
 		} else {
@@ -100,49 +100,49 @@ let ListMagic = {
 		ListMagic.pageElements.textareaText.val(ListMagic.variables.itemsList.join("\n"));
 
 		// Update the number of items in textarea description
-		ListMagic.pageElements.labelTextarea.text("List" + (ListMagic.variables.itemsList.length > 0? " (" + ListMagic.variables.itemsList.length + ")" : ""));
+		ListMagic.pageElements.labelTextarea.text("List" + (ListMagic.variables.itemsList.length > 0 ? " (" + ListMagic.variables.itemsList.length + ")" : ""));
 	},
-	processListToRaw: ()=>{
+	processListToRaw: () => {
 		let listElements = ListMagic.pageElements.textareaText.val().split("\n");
 
-		if(ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")){
-			listElements = listElements.map((value)=> value.trim());
+		if (ListMagic.pageElements.inputSwitchTrimWhitespaces.prop("checked")) {
+			listElements = listElements.map((value) => value.trim());
 		}
 
 		ListMagic.pageElements.inputText.val(listElements.join(ListMagic.autodetectDelimiter()));
 	},
-	autodetectDelimiter: (text)=>{
+	autodetectDelimiter: (text) => {
 		text = text || ListMagic.pageElements.inputText.val();
 
 		// default = comma
 		let delimiter = ",";
 
 		// <pipe>
-		if(/\|/.test(text)){
+		if (/\|/.test(text)) {
 			delimiter = "|";
 		}
 		// <comma>
-		else if(/,/.test(text)){
+		else if (/,/.test(text)) {
 			delimiter = ",";
 		}
 		// <space>
-		else if(/ /.test(text)){
+		else if (/ /.test(text)) {
 			delimiter = " ";
 		}
 
 
 		// check if auto delimiter disabled, otherwise use default behaviour
-		if(!ListMagic.pageElements.inputSwitchAutoDelimiter.is(":checked")){
+		if (!ListMagic.pageElements.inputSwitchAutoDelimiter.is(":checked")) {
 			delimiter = ListMagic.pageElements.inputDelimiter.val() || delimiter;
-		} 
-		
+		}
+
 		// Update UI
 		ListMagic.pageElements.inputDelimiter.val(delimiter);
 
 		return delimiter;
 	},
-	sortFunction: (a,b)=>{
-		return a.localeCompare(b, undefined, {sensitivity: 'base'});
+	sortFunction: (a, b) => {
+		return a.localeCompare(b, undefined, { sensitivity: 'base' });
 	}
 };
 
