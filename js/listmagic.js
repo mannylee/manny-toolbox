@@ -30,6 +30,7 @@ let ListMagic = {
 		ListMagic.pageElements.inputSwitchAutoDelimiter.on("change", function () {
 			ListMagic.pageElements.inputDelimiter.prop("disabled", $(this).is(':checked'));
 			ListMagic.processRawToList();
+			ListMagic.pageElements.inputDelimiter.trigger("change");
 		});
 		ListMagic.pageElements.inputSwitchDeduplicate.on("change", ListMagic.processRawToList);
 		ListMagic.pageElements.inputSwitchSortAlphabetically.on("change", ListMagic.processRawToList);

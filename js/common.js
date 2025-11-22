@@ -5,7 +5,8 @@ const CONSTANTS = {
 	PAGES: {
 		listmagic: "listmagic",
 		urldecoder: "urldecoder",
-		jsonunfurler: "jsonunfurler"
+		jsonunfurler: "jsonunfurler",
+		awsipchecker: "awsipchecker"
 	}
 };
 
