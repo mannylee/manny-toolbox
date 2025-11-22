@@ -18,3 +18,7 @@ Decodes URL-encoded strings and extracts URL search parameters. Features automat
 ### [JSON Unfurler](https://mannylee.github.io/manny-toolbox/?page=jsonunfurler)
 
 Parses and formats JSON with proper indentation. Automatically detects and unfurls nested JSON strings within the main JSON object, converting escaped JSON into readable nested structures.
+
+### [AWS IP Checker](https://mannylee.github.io/manny-toolbox/?page=awsipchecker)
+
+Check if an IP address belongs to AWS infrastructure. Supports both IPv4 and IPv6 addresses and provides detailed information about AWS regions and services.

@@ -13,7 +13,8 @@ let AwsIpChecker = {
 	variables: {
 		awsData: null,
 		lastSyncTime: null,
-		currentMatches: []
+		currentMatches: [],
+		updateTimerInterval: null
 	},
 	config: {
 		apiUrl: "https://ip-ranges.amazonaws.com/ip-ranges.json",
@@ -40,10 +41,17 @@ let AwsIpChecker = {
 		// Load AWS data
 		AwsIpChecker.fetchAwsIpRanges();
 
+		// Start the update timer
+		AwsIpChecker.startUpdateTimer();
+
 		// Ready
 		CommonHelpers.logger.info("loaded successfully", AwsIpChecker.name);
 	},
 	destroy: () => {
+		// Clear the update timer
+		if (AwsIpChecker.variables.updateTimerInterval) {
+			clearInterval(AwsIpChecker.variables.updateTimerInterval);
+		}
 		AwsIpChecker = null;
 	},
 
@@ -339,6 +347,45 @@ let AwsIpChecker = {
 		
 		AwsIpChecker.pageElements.badgeDataStatus.text(statusText);
 		AwsIpChecker.pageElements.badgeDataStatus.removeClass("bg-danger").addClass("bg-secondary");
+	},
+	startUpdateTimer: () => {
+		// Clear any existing timer
+		if (AwsIpChecker.variables.updateTimerInterval) {
+			clearInterval(AwsIpChecker.variables.updateTimerInterval);
+		}
+		
+		// Function to determine update interval based on age
+		const getUpdateInterval = () => {
+			if (!AwsIpChecker.lastSyncTime) {
+				return 60000; // 1 minute default
+			}
+			
+			const age = Date.now() - AwsIpChecker.lastSyncTime;
+			const hours = Math.floor(age / (1000 * 60 * 60));
+			
+			// Update every minute if less than 1 hour old
+			// Update every 10 minutes if 1 hour or older
+			return hours < 1 ? 60000 : 600000;
+		};
+		
+		// Initial update
+		AwsIpChecker.updateDataStatus();
+		
+		// Set up recurring updates
+		const updateAndReschedule = () => {
+			AwsIpChecker.updateDataStatus();
+			
+			// Reschedule with potentially different interval
+			const newInterval = getUpdateInterval();
+			if (AwsIpChecker.variables.updateTimerInterval) {
+				clearInterval(AwsIpChecker.variables.updateTimerInterval);
+			}
+			AwsIpChecker.variables.updateTimerInterval = setInterval(updateAndReschedule, newInterval);
+		};
+		
+		// Start the timer with initial interval
+		const initialInterval = getUpdateInterval();
+		AwsIpChecker.variables.updateTimerInterval = setInterval(updateAndReschedule, initialInterval);
 	},
 
 	// Helper functions
