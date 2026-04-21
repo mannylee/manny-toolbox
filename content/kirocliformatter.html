@@ -1,0 +1,28 @@
+<div class="container my-4">
+	<div class="row justify-content-center">
+		<div class="col-lg-11 col-md-12">
+			<h2 id="h2_title"></h2>
+			<p class="text-muted mb-3">Reformats messy Kiro-CLI output into clean, readable prose. Strips leading whitespace from each line, flattens hard line breaks into single spaces, converts pairs of spaces into paragraph breaks, and cleans up any indentation left immediately after a newline.</p>
+			<div class="card">
+				<div class="card-body">
+					<div class="mb-3">
+						<div class="form-floating">
+							<textarea id="textarea_input" class="form-control"
+								placeholder="Paste Kiro output here..." autocomplete="false" spellcheck="false"
+								style="font-size: 10pt; height: calc(40vh - 40px); min-height: 200px; font-family: Courier;"></textarea>
+							<label for="textarea_input">Kiro Output (Input)</label>
+						</div>
+					</div>
+					<div class="mb-0">
+						<div class="form-floating">
+							<textarea id="textarea_output" class="form-control" readonly
+								placeholder="Formatted result will appear here..." autocomplete="false" spellcheck="false"
+								style="font-size: 10pt; height: calc(40vh - 40px); min-height: 200px; font-family: Courier;"></textarea>
+							<label for="textarea_output">Formatted Result</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

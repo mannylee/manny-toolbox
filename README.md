@@ -22,3 +22,7 @@ Parses and formats JSON with proper indentation. Automatically detects and unfur
 ### [AWS IP Checker](https://mannylee.github.io/manny-toolbox/?page=awsipchecker)
 
 Check if an IP address belongs to AWS infrastructure. Supports both IPv4 and IPv6 addresses and provides detailed information about AWS regions and services.
+
+### [Kiro-CLI Formatter](https://mannylee.github.io/manny-toolbox/?page=kirocliformatter)
+
+Reformats messy Kiro-CLI output into clean, readable prose. Strips leading whitespace from every line, flattens hard line breaks into single spaces, converts runs of two consecutive spaces into paragraph breaks, and collapses any leftover indentation that follows a newline.

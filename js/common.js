@@ -6,7 +6,8 @@ const CONSTANTS = {
 		listmagic: "listmagic",
 		urldecoder: "urldecoder",
 		jsonunfurler: "jsonunfurler",
-		awsipchecker: "awsipchecker"
+		awsipchecker: "awsipchecker",
+		kirocliformatter: "kirocliformatter"
 	}
 };
 
