@@ -2,7 +2,7 @@
 	<div class="row justify-content-center">
 		<div class="col-lg-11 col-md-12">
 			<h2 id="h2_title"></h2>
-			<p class="text-muted mb-3">Reformats messy Kiro-CLI output into clean, readable prose. Strips leading whitespace from each line, flattens hard line breaks into single spaces, converts pairs of spaces into paragraph breaks, and cleans up any indentation left immediately after a newline.</p>
+			<p class="text-muted mb-3">Reformats messy Kiro-CLI output into clean prose, lists, and tables. Detects ordered and unordered lists, strips blockquote prefixes, softens em-dashes into commas or hyphens, unwraps soft line breaks, and supports inline markdown (bold, italic, code, links) when rendered as HTML. Output can be copied as plain text or as minimal HTML suitable for pasting into Outlook or Slack.</p>
 			<div class="card">
 				<div class="card-body">
 					<div class="mb-3">
@@ -13,12 +13,37 @@
 							<label for="textarea_input">Kiro Output (Input)</label>
 						</div>
 					</div>
-					<div class="mb-0">
+
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<div class="btn-group btn-group-sm" role="group" aria-label="Output mode">
+							<input type="radio" class="btn-check" name="output_mode" id="output_mode_text" value="text" autocomplete="off">
+							<label class="btn btn-outline-primary" for="output_mode_text">Plain Text</label>
+
+							<input type="radio" class="btn-check" name="output_mode" id="output_mode_html" value="html" autocomplete="off">
+							<label class="btn btn-outline-primary" for="output_mode_html">Rendered HTML</label>
+						</div>
+						<div id="div_copy_controls" class="d-flex align-items-center" style="display:none;">
+							<span id="span_copy_status" class="me-2 small text-success" style="visibility:hidden;">Copied</span>
+							<button id="button_copy" type="button" class="btn btn-sm btn-outline-primary">Copy</button>
+						</div>
+					</div>
+
+					<div id="output_text_wrapper" class="mb-0">
 						<div class="form-floating">
 							<textarea id="textarea_output" class="form-control" readonly
 								placeholder="Formatted result will appear here..." autocomplete="false" spellcheck="false"
 								style="font-size: 10pt; height: calc(40vh - 40px); min-height: 200px; font-family: Courier;"></textarea>
 							<label for="textarea_output">Formatted Result</label>
+						</div>
+					</div>
+
+					<div id="output_html_wrapper" class="mb-0" style="display:none;">
+						<label class="form-label text-muted small mb-1">Rendered Result (paste into Outlook or Slack)</label>
+						<div id="div_output"
+							class="form-control allow-select"
+							contenteditable="true"
+							spellcheck="false"
+							style="min-height: 200px; height: calc(40vh - 40px); overflow: auto; background-color: #fff;">
 						</div>
 					</div>
 				</div>
