@@ -1,24 +1,28 @@
-let KiroCliFormatter = {
+var KiroCliFormatter = {
 	name: "KiroCliFormatter",
 	friendlyName: "Kiro-CLI Formatter",
 	storageKeys: {
 		outputMode: "kirocliformatter.outputMode"
 	},
-	pageElements: {
-		h2Title: $("#h2_title"),
-		textareaInput: $("#textarea_input"),
-		textareaOutput: $("#textarea_output"),
-		divOutput: $("#div_output"),
-		outputTextWrapper: $("#output_text_wrapper"),
-		outputHtmlWrapper: $("#output_html_wrapper"),
-		divCopyControls: $("#div_copy_controls"),
-		buttonCopy: $("#button_copy"),
-		spanCopyStatus: $("#span_copy_status"),
-		radiosOutputMode: $("input[name='output_mode']")
+	pageElements: {},
+	bindElements: () => {
+		KiroCliFormatter.pageElements = {
+			h2Title: $("#h2_title"),
+			textareaInput: $("#textarea_input"),
+			textareaOutput: $("#textarea_output"),
+			divOutput: $("#div_output"),
+			outputTextWrapper: $("#output_text_wrapper"),
+			outputHtmlWrapper: $("#output_html_wrapper"),
+			divCopyControls: $("#div_copy_controls"),
+			buttonCopy: $("#button_copy"),
+			spanCopyStatus: $("#span_copy_status"),
+			radiosOutputMode: $("input[name='output_mode']")
+		};
 	},
 	load: () => {
 		// Update SPA
 		SPA.variables.currentPageObject = KiroCliFormatter;
+		KiroCliFormatter.bindElements();
 
 		// Restore persisted output mode (default to "text")
 		const savedMode = KiroCliFormatter.readSavedMode();

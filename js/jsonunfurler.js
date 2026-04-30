@@ -1,14 +1,18 @@
-let JsonUnfurler = {
+var JsonUnfurler = {
 	name: "JsonUnfurler",
 	friendlyName: "JSON Unfurler",
-	pageElements: {
-		h2Title: $("#h2_title"),
-		textareaInput: $("#textarea_input"),
-		textareaOutput: $("#textarea_output"),
+	pageElements: {},
+	bindElements: ()=>{
+		JsonUnfurler.pageElements = {
+			h2Title: $("#h2_title"),
+			textareaInput: $("#textarea_input"),
+			textareaOutput: $("#textarea_output"),
+		};
 	},
 	load: ()=>{
 		// Update SPA
 		SPA.variables.currentPageObject = JsonUnfurler;
+		JsonUnfurler.bindElements();
 
 		// Register listeners
 		JsonUnfurler.pageElements.textareaInput.on("keyup", JsonUnfurler.processJson);

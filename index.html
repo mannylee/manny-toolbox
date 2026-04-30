@@ -4,11 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="css/master.css" rel="stylesheet">
   <link rel="alternate icon" class="js-site-favicon" type="image/png" href="https://github.githubassets.com/favicons/favicon-dark.png">
 </head>
 <body id="body" class="prevent-select">
-</body>
+
+  <!-- Top bar (visible on small screens for hamburger toggle) -->
+  <nav id="topbar" class="navbar navbar-dark bg-dark d-md-none">
+    <div class="container-fluid">
+      <button id="btn_sidebar_toggle" class="navbar-toggler prevent-select" type="button" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <span class="navbar-brand mb-0 h1 ms-2 prevent-select">Toolbox</span>
+    </div>
+  </nav>
+
+  <!-- Backdrop for sidebar on small screens -->
+  <div id="sidebar_backdrop" class="sidebar-backdrop"></div>
+
+  <!-- Layout wrapper -->
+  <div id="layout" class="layout">
+
+    <!-- Sidebar navigation -->
+    <aside id="sidebar" class="sidebar" aria-label="Primary navigation">
+      <div class="sidebar-header d-flex align-items-center justify-content-between">
+        <span class="sidebar-brand">Toolbox</span>
+        <button id="btn_sidebar_close" class="btn btn-sm btn-outline-light d-md-none prevent-select" aria-label="Close navigation">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <ul id="sidebar_nav" class="sidebar-nav list-unstyled mb-0">
+        <!-- Nav items are rendered by SPA.renderNav() -->
+      </ul>
+    </aside>
+
+    <!-- Main content area (pages load in here) -->
+    <main id="content" class="content">
+      <!-- SPA page content is loaded here -->
+    </main>
+
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -18,4 +54,5 @@
         SPA.initialise();
     });
 </script>
+</body>
 </html>

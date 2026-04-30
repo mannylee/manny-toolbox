@@ -1,27 +1,31 @@
-let ListMagic = {
+var ListMagic = {
 	name: "ListMagic",
 	friendlyName: "List Magic",
-	pageElements: {
-		h2Title: $("#h2_title"),
-		inputDelimiter: $("#input_delimiter"),
-		inputSwitchAutoDelimiter: $("#input_switch_auto_delimiter"),
-		inputSwitchDeduplicate: $("#input_switch_deduplicate"),
-		inputSwitchNoBlankStrings: $("#input_switch_no_blank_strings"),
-		inputSwitchSortAlphabetically: $("#input_switch_sort_alphabetically"),
-		inputSwitchTrimWhitespaces: $("#input_switch_trim_whitespaces"),
-		inputText: $("#input_text"),
-		labelTextarea: $("label[for='textarea_text']"),
-		textareaText: $("#textarea_text"),
-	},
+	pageElements: {},
 	config: {
 		inputTextMinLength: 3	// min length before any processing should happen
 	},
 	variables: {
 		itemsList: []
 	},
+	bindElements: () => {
+		ListMagic.pageElements = {
+			h2Title: $("#h2_title"),
+			inputDelimiter: $("#input_delimiter"),
+			inputSwitchAutoDelimiter: $("#input_switch_auto_delimiter"),
+			inputSwitchDeduplicate: $("#input_switch_deduplicate"),
+			inputSwitchNoBlankStrings: $("#input_switch_no_blank_strings"),
+			inputSwitchSortAlphabetically: $("#input_switch_sort_alphabetically"),
+			inputSwitchTrimWhitespaces: $("#input_switch_trim_whitespaces"),
+			inputText: $("#input_text"),
+			labelTextarea: $("label[for='textarea_text']"),
+			textareaText: $("#textarea_text"),
+		};
+	},
 	load: () => {
 		// Update SPA
 		SPA.variables.currentPageObject = ListMagic;
+		ListMagic.bindElements();
 
 		// Register listeners & configs
 		ListMagic.pageElements.inputText.on("keyup", ListMagic.processRawToList);

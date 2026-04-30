@@ -1,15 +1,7 @@
-let AwsIpChecker = {
+var AwsIpChecker = {
 	name: "AwsIpChecker",
 	friendlyName: "AWS IP Range Checker",
-	pageElements: {
-		h2Title: $("#h2_title"),
-		inputIpAddress: $("#input_ip_address"),
-		btnLookup: $("#btn_lookup"),
-		btnClear: $("#btn_clear"),
-		btnRefresh: $("#btn_refresh"),
-		divResults: $("#div_results"),
-		badgeDataStatus: $("#badge_data_status")
-	},
+	pageElements: {},
 	variables: {
 		awsData: null,
 		lastSyncTime: null,
@@ -23,9 +15,21 @@ let AwsIpChecker = {
 		cacheTTL: 24 * 60 * 60 * 1000,
 		maxMatchesToDisplay: 10
 	},
+	bindElements: () => {
+		AwsIpChecker.pageElements = {
+			h2Title: $("#h2_title"),
+			inputIpAddress: $("#input_ip_address"),
+			btnLookup: $("#btn_lookup"),
+			btnClear: $("#btn_clear"),
+			btnRefresh: $("#btn_refresh"),
+			divResults: $("#div_results"),
+			badgeDataStatus: $("#badge_data_status")
+		};
+	},
 	load: () => {
 		// Update SPA
 		SPA.variables.currentPageObject = AwsIpChecker;
+		AwsIpChecker.bindElements();
 
 		// Register listeners
 		AwsIpChecker.pageElements.btnLookup.on("click", AwsIpChecker.lookupIpAddress);

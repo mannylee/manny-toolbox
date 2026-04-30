@@ -1,15 +1,7 @@
-let UrlDecoder = {
+var UrlDecoder = {
 	name: "UrlDecoder",
 	friendlyName: "URL Decoder",
-	pageElements: {
-		h2Title: $("#h2_title"),
-		textareaUrl: $("#textarea_url"),
-		textareaDecodedFull: $("#textarea_decoded_full"),
-		textareaDecodedSearchParams: $("#textarea_decoded_search_params"),
-		textareaDecodedSearchParamsLabel: $("label[for='textarea_decoded_search_params']"),
-		inputSwitchParseNestedJson: $("#input_switch_parse_nested_json"),
-		inputSwitchAlphabeticise: $("#input_switch_alphabeticise")
-	},
+	pageElements: {},
 	config: {
 
 	},
@@ -19,9 +11,21 @@ let UrlDecoder = {
 		isUpdatingFromParams: false,
 		isUpdatingFromUrl: false
 	},
+	bindElements: () => {
+		UrlDecoder.pageElements = {
+			h2Title: $("#h2_title"),
+			textareaUrl: $("#textarea_url"),
+			textareaDecodedFull: $("#textarea_decoded_full"),
+			textareaDecodedSearchParams: $("#textarea_decoded_search_params"),
+			textareaDecodedSearchParamsLabel: $("label[for='textarea_decoded_search_params']"),
+			inputSwitchParseNestedJson: $("#input_switch_parse_nested_json"),
+			inputSwitchAlphabeticise: $("#input_switch_alphabeticise")
+		};
+	},
 	load: () => {
 		// Update SPA
 		SPA.variables.currentPageObject = UrlDecoder;
+		UrlDecoder.bindElements();
 
 		// Register listeners & configs
 		UrlDecoder.pageElements.textareaUrl.on("keyup", UrlDecoder.processUrl);
